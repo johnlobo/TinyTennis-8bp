@@ -19,8 +19,8 @@ dw DUST01,DUST01,DUST02,DUST03,BLANK2x4,1,0;1
 dw PLAYER02, PLAYER03, PLAYER04,0,0,0,0,0;2  Derecha
 dw PLAYER05, PLAYER06, PLAYER07,0,0,0,0,0;3  Izquierda
 dw PLAYER08, PLAYER09, PLAYER10,0,0,0,0,0;4  Golpe de espaldas
-dw PLAYER01, PLAYER11, PLAYER01, PLAYER12,0,0,0,0;6  Arriba
-dw PLAYER13, PLAYER14, PLAYER13, PLAYER15,0,0,0,0;7  Abajo
+dw PLAYER01, PLAYER11, PLAYER01, PLAYER12,0,0,0,0;5  Arriba
+dw PLAYER13, PLAYER14, PLAYER13, PLAYER15,0,0,0,0;6  Abajo
 dw PLAYER16, PLAYER17, PLAYER18, 0,0,0,0,0;7  Golpe defrente
 
 ;-------- MACRO SECUENCIAS ----------------------
@@ -31,4 +31,5 @@ dw PLAYER16, PLAYER17, PLAYER18, 0,0,0,0,0;7  Golpe defrente
 ; un cero significa que se asigna la ultima que tenga. si se usa el cero hay que asignar alguna al iniciar
 _MACRO_SEQUENCES
 ;db 0,2,1,3,5,3,4,6,4;32 --> secuencias del soldado , id=32. la siguiente secuencia seria la 33
+db 0,3,2,5,3,2,6,3,2;32
 
