@@ -29,21 +29,27 @@
 1'220 |MUSIC,1,0,0,5:puntos=0      
 230 cor=32:cod=32:|COLSPALL,@cor,@cod' configura comando de colision
 240 GOSUB 1000' RENDER SCREEN
-250 |PRINTSPALL,0,0,1,0: 'configura comando de impresion
+1'250 |PRINTSPALL,0,0,1,0: 'configura comando de impresion
+250 CALL &62A1,0,0,1,0: 'configura comando de impresion
+260 c = 0
 
 1'****************************************************
 1' GAME CYCLE
 1'****************************************************
 1' Compruebo si el personaje se encuentra en el ultimo frame de un golpe
-300 IF PEEK(27455) = 7 AND PEEK(27456) = 3 THEN |SETUPSP,29,7,32:|SETUPSP,28,7,32
+300 c=c+1
+1'305 IF PEEK(27455) = 7 AND PEEK(27456) = 3 THEN |SETUPSP,29,7,32:|SETUPSP,28,7,32
+305 IF PEEK(27455) = 7 AND PEEK(27456) = 3 THEN CALL &7101,29,7,32:CALL &7101,28,7,32
 1' lee el teclado y posiciona al personaje
 310 IF INKEY(27)=0 AND p1vx<1 THEN p1vx=p1vx+1:GOTO 330
 320 IF INKEY(34)=0 AND p1vx>-1 THEN  p1vx=p1vx-1
 330 IF INKEY(69)=0 AND p1vy<1 THEN p1vy=p1vy+1:p2vy=p2vy-1:GOTO 350
 340 IF INKEY(67)=0 AND p1vy>-1 THEN p1vy=p1vy-1:p2vy=p2vy+1
 350 IF INKEY(47)=0 THEN p1vx=0:p1vy=0:p2vy=0:|SETUPSP,29,7,4:|SETUPSP,28,7,7
-360 |SETUPSP,29,5,p1vy,p1vx
-370 |SETUPSP,28,5,p2vy,p1vx
+1'360 |SETUPSP,29,5,p1vy,p1vx
+360 CALL &7101,29,5,p1vy,p1vx
+1'370 |SETUPSP,28,5,p2vy,p1vx
+370 CALL &7101,28,5,p2vy,p1vx
 380 GOSUB 600'UPDATE ENTITIES
 390 GOSUB 800'RENDER SPRITES
 400 bpx=bx:bpy=by:bpz=bz
@@ -53,7 +59,7 @@
 1' UPDATE ENTITIES
 1'****************************************************
 600 '
-605 |COLSPALL:IF cor<32 THEN GOSUB 1200:' Tratamiento de colisiones
+605 if c and 1 THEN |COLSPALL:IF cor<32 THEN GOSUB 1200:' Tratamiento de colisiones
 610 bx=bx+bvx:by=by+bvy' update ball position with speed
 620 IF bx<=0 AND bvx<0 THEN bx=0:bvx = - bvx
 630 IF bx>=80 AND bvx>0 THEN bx=80:bvx = - bvx
