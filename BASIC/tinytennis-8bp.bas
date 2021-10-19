@@ -9,17 +9,17 @@
 60 FOR j=0 TO 31:|SETUPSP,j,0,0:NEXT:|3D,0:'reset sprites
 
 1 ' SETUP BOLA : sprite 31 -> bola
-100 bx=40:by=100:bz=10' coordenadas de la pelota
-110 bvx=1:bvy=2:bvz=0' velocidad de la pelota
+100 bx=400:by=1000:bz=100' coordenadas de la pelota
+110 bvx=15:bvy=25:bvz=0' velocidad de la pelota
 120 bpx=bx:bpy=by:bpz=bz'
-130 g=1' gravity
+130 g=5' gravity
 140 |SETUPSP,31,0,1+32' status de la bola
 150 |SETUPSP,31,9,17' assign ball sprite
-160 |LOCATESP,31,by-(bz/2),bx:'colocamos al sprite (sin imprimirlo aun)
+160 |LOCATESP,31,(by-(bz/2))/10,bx/10:'colocamos al sprite (sin imprimirlo aun)
 1' SETUP BLANK : sprite 0 -> borrado
 170 |SETUPSP,0,9,16' assign blank sprite
 1' SETUP SHADOW : sprite 30 -> shadow
-180 |SETUPSP,30,0,1:|SETUPSP,30,9,18:|LOCATESP,30,by,bx
+180 |SETUPSP,30,0,1:|SETUPSP,30,9,18:|LOCATESP,30,by/10,bx/10
 1' SETUP PLAYER 1: sprite 29 -> PLAYER
 190 p1x=40:p1y=160:p1vx=0:p1vy=0:p2vy=0
 200 |SETUPSP,29,0,1+2+4+8:|SETUPSP,29,9,22:|SETUPSP,29,7,6:|SETUPSP,29,7,32:|LOCATESP,29,p1y,p1x
@@ -62,10 +62,10 @@
 605 if c and 1 THEN |COLSPALL:IF cor<32 THEN GOSUB 1200:' Tratamiento de colisiones
 610 bx=bx+bvx:by=by+bvy' update ball position with speed
 620 IF bx<=0 AND bvx<0 THEN bx=0:bvx = - bvx
-630 IF bx>=80 AND bvx>0 THEN bx=80:bvx = - bvx
+630 IF bx>=800 AND bvx>0 THEN bx=800:bvx = - bvx
 640 IF by<=0 AND bvy<0 THEN by=0:bvy = - bvy
-650 IF by>=200 AND bvy>0 THEN by=200:bvy = - bvy
-660 bvz=bvz-g:bz=bz+bvz:IF bz<=0 THEN bz=0:bvz=((RND(1)*100)MOD 11)+1:|SETUPSP,1,9,19:|LOCATESP,1,by,bx:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101' check impact with the floor
+650 IF by>=2000 AND bvy>0 THEN by=2000:bvy = - bvy
+660 bvz=bvz-g:bz=bz+bvz:IF bz<=0 THEN bz=0:bvz=90:|SETUPSP,1,9,19:|LOCATESP,1,by/10,bx/10:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101' check impact with the floor
 670 RETURN
 
 1'****************************************************
@@ -74,11 +74,11 @@
 1' RENDER BALL
 800 '
 810 '
-820 |LOCATESP,30,by,bx
-830 |LOCATESP,31,by-(bz/2),bx
-840 IF bpy<>by OR bpx<>bx THEN |PRINTSP,0,bpy,bpx
+820 |LOCATESP,30,by/10,bx/10
+830 |LOCATESP,31,(by-(bz/2))/10,bx/10
+840 IF bpy<>by OR bpx<>bx THEN |PRINTSP,0,bpy/10,bpx/10
 1'ERASE BALL AND SHADOW
-850 |PRINTSP,0,bpy-(bpz/2),bpx
+850 |PRINTSP,0,(bpy-(bpz/2))/10,bpx/10
 1'UPDATE AND PRINT ALL
 860 |AUTOALL:|PRINTSPALL 
 870 RETURN
@@ -94,8 +94,8 @@
 1'****************************************************
 1' TRATAMIENTO DE COLISIONES
 1'****************************************************
-1200 IF cod = 28 AND PEEK(27471) = 4 THEN bvy=2:bvx= PEEK(27472) - 1:RETURN
-1210 IF cod = 29 AND PEEK(27455) = 7 THEN bvy=-2:bvx= PEEK(27456) - 1:RETURN
+1200 IF cod = 28 AND PEEK(27471) = 4 THEN bvy=25:bvx= PEEK(27472) - 1:RETURN
+1210 IF cod = 29 AND PEEK(27455) = 7 THEN bvy=-25:bvx= PEEK(27456) - 1:RETURN
 1220 bvy=0:bvx=0:RETURN
 
 1'****************************************************
