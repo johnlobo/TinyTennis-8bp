@@ -11,8 +11,8 @@
 1 ' SETUP BOLA : sprite 31 -> bola
 100 bx=400:by=1000:bz=100' coordenadas de la pelota
 110 bvx=15:bvy=25:bvz=0' velocidad de la pelota
-120 bpx=bx:bpy=by:bpz=bz'
-130 g=5' gravity
+120 bpx=bx/10:bpy=by/10:bpz=bz/10:bpzy=(bpy-(bpz/2))' PREVIOUS BALL COORDINATES
+130 g=4' gravity
 140 |SETUPSP,31,0,1+32' status de la bola
 150 |SETUPSP,31,9,17' assign ball sprite
 160 |LOCATESP,31,(by-(bz/2))/10,bx/10:'colocamos al sprite (sin imprimirlo aun)
@@ -50,9 +50,11 @@
 360 CALL &7101,29,5,p1vy,p1vx
 1'370 |SETUPSP,28,5,p2vy,p1vx
 370 CALL &7101,28,5,p2vy,p1vx
-380 GOSUB 600'UPDATE ENTITIES
-390 GOSUB 800'RENDER SPRITES
-400 bpx=bx:bpy=by:bpz=bz
+1'UPDATE ENTITIES
+380 GOSUB 600
+1'RENDER SPRITES
+390 GOSUB 800
+1'LOOP
 410 GOTO 300
 
 1'****************************************************
@@ -60,12 +62,21 @@
 1'****************************************************
 600 '
 605 if c and 1 THEN |COLSPALL:IF cor<32 THEN GOSUB 1200:' Tratamiento de colisiones
-610 bx=bx+bvx:by=by+bvy' update ball position with speed
+1' update ball position with speed
+610 bx=bx+bvx:by=by+bvy
+1' CHECK KEYBOARD
 620 IF bx<=0 AND bvx<0 THEN bx=0:bvx = - bvx
 630 IF bx>=800 AND bvx>0 THEN bx=800:bvx = - bvx
 640 IF by<=0 AND bvy<0 THEN by=0:bvy = - bvy
 650 IF by>=2000 AND bvy>0 THEN by=2000:bvy = - bvy
-660 bvz=bvz-g:bz=bz+bvz:IF bz<=0 THEN bz=0:bvz=90:|SETUPSP,1,9,19:|LOCATESP,1,by/10,bx/10:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101' check impact with the floor
+1' UPDATE GRAVITY AND Z COORD
+660 bvz=bvz-g:bz=bz+bvz
+1' brx, bry -> render coordinates
+662 brx=bx/10:bry=by/10:brz=bz/10
+1' bzy -> projection y coordinates
+663 bzy=(bry-(brz/2))
+1' CHECK IMPACT WITH THE FLOOR
+665 IF bz<=0 THEN bz=0:bvz=80:|SETUPSP,1,9,19:|LOCATESP,1,bry,brx:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101
 670 RETURN
 
 1'****************************************************
@@ -74,14 +85,15 @@
 1' RENDER BALL
 800 '
 810 '
-820 |LOCATESP,30,by/10,bx/10
-830 |LOCATESP,31,(by-(bz/2))/10,bx/10
-840 IF bpy<>by OR bpx<>bx THEN |PRINTSP,0,bpy/10,bpx/10
+820 |LOCATESP,30,bry,brx
+830 |LOCATESP,31,bzy,brx
 1'ERASE BALL AND SHADOW
-850 |PRINTSP,0,(bpy-(bpz/2))/10,bpx/10
+840 IF bpy<>bry OR bpx<>brx THEN |PRINTSP,0,bpy,bpx:|PRINTSP,0,bpzy,bpx
 1'UPDATE AND PRINT ALL
 860 |AUTOALL:|PRINTSPALL 
-870 RETURN
+1' PREVIOUS COORDINATES
+870 bpx=brx:bpy=bry:bpz=brz:bpzy=(bpy-(bpz/2))
+880 RETURN
 
 1'****************************************************
 1' RENDER SCREEN
