@@ -9,17 +9,23 @@
 60 FOR j=0 TO 31:|SETUPSP,j,0,0:NEXT:|3D,0:'reset sprites
 
 1 ' SETUP BOLA : sprite 31 -> bola
-100 bx=400:by=1000:bz=100' coordenadas de la pelota
-110 bvx=15:bvy=25:bvz=0' velocidad de la pelota
-120 bpx=bx/10:bpy=by/10:bpz=bz/10:bpzy=(bpy-(bpz/2))' PREVIOUS BALL COORDINATES
+100 bx=&2800:by=&0a00:bz=&0100' coordenadas de la pelota
+110 bvx=&0f:bvy=&32:bvz=&0' velocidad de la pelota
+120 bpx=bx:call &a438,@bpx  'redondeo la posicion anterior en x
+125 bpy=by:call &a438,@bpy  'redondeo la posicion anterior en y
+126 bpz=bz:call &a438,@bpz  'redondeo la posicion anterior en z
+127 tz=bpz:call &a445,@tz: bpzy=(bpy-tz)    ' PREVIOUS BALL COORDINATES
 130 g=4' gravity
 140 |SETUPSP,31,0,1+32' status de la bola
 150 |SETUPSP,31,9,17' assign ball sprite
-160 |LOCATESP,31,(by-(bz/2))/10,bx/10:'colocamos al sprite (sin imprimirlo aun)
+155 brx=bx:call &a438,@brx 'redondeo la posicion de render en x
+160 tz=bz:call &a445,@tz ' divides bz by 2'
+165 bry=by-tz:call &a438,@bry
+167 |LOCATESP,31,bry,brx:'colocamos al sprite (sin imprimirlo aun)
 1' SETUP BLANK : sprite 0 -> borrado
 170 |SETUPSP,0,9,16' assign blank sprite
 1' SETUP SHADOW : sprite 30 -> shadow
-180 |SETUPSP,30,0,1:|SETUPSP,30,9,18:|LOCATESP,30,by/10,bx/10
+180 |SETUPSP,30,0,1:|SETUPSP,30,9,18:|LOCATESP,30,bry,brx
 1' SETUP PLAYER 1: sprite 29 -> PLAYER
 190 p1x=40:p1y=160:p1vx=0:p1vy=0:dir=1
 195 p2x=40:p2y=10:p2vy=0:p2vx=0
@@ -67,15 +73,17 @@
 610 bx=bx+bvx:by=by+bvy
 1' CHECK KEYBOARD
 620 IF bx<=0 AND bvx<0 THEN bx=0:bvx = - bvx
-630 IF bx>=800 AND bvx>0 THEN bx=800:bvx = - bvx
+630 IF bx>=&5000 AND bvx>0 THEN bx=&5000:bvx = - bvx
 640 IF by<=0 AND bvy<0 THEN by=0:bvy = - bvy
-650 IF by>=2000 AND bvy>0 THEN by=2000:bvy = - bvy
+650 IF by>=&c800 AND bvy>0 THEN by=&c800:bvy = - bvy
 1' UPDATE GRAVITY AND Z COORD
 660 bvz=bvz-g:bz=bz+bvz
-1' brx, bry -> render coordinates
-662 brx=bx/10:bry=by/10:brz=bz/10
+1' brx, bry, brz  -> render coordinates
+661 brx=bx:call &A438,@brx
+662 bry=by:call &a438,@bry
+663 brz=bz:call &a438,@brz
 1' bzy -> projection y coordinates
-663 bzy=(bry-(brz/2))
+664 tz=brz:call &a445,@tz:bzy=(bry-tz)
 1' CHECK IMPACT WITH THE FLOOR
 665 IF bz<=0 THEN bz=0:bvz=80:|SETUPSP,1,9,19:|LOCATESP,1,bry,brx:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101
 1'UPDATE BOT DIRECTION
@@ -95,11 +103,11 @@
 820 |LOCATESP,30,bry,brx
 830 |LOCATESP,31,bzy,brx
 1'ERASE BALL AND SHADOW
-840 IF bpy<>bry OR bpx<>brx THEN |PRINTSP,0,bpy,bpx:|PRINTSP,0,bpzy,bpx
+840 IF bpy<>bry OR bpx<>brx or bpz<>bz THEN |PRINTSP,0,bpy,bpx:|PRINTSP,0,bpzy,bpx
 1'UPDATE AND PRINT ALL
 860 |AUTOALL:|PRINTSPALL 
 1' PREVIOUS COORDINATES
-870 bpx=brx:bpy=bry:bpz=brz:bpzy=(bpy-(bpz/2))
+870 bpx=brx:bpy=bry:bpz=brz:tz=bpz:call &a445,@tz:bpzy=(bpy-tz)
 880 RETURN
 
 1'****************************************************
@@ -113,7 +121,7 @@
 1'****************************************************
 1' TRATAMIENTO DE COLISIONES
 1'****************************************************
-1200 IF cod = 29 AND PEEK(27471) = 4 THEN bvy=25:bvx= PEEK(27472) - 1:RETURN
+1200 IF cod = 29 AND PEEK(27471) = 4 THEN bvy=-25:bvx= (PEEK(27472) - 1)*128:RETURN
 1220 bvy=0:bvx=0:RETURN
 
 1'****************************************************

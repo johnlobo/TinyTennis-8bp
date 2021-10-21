@@ -22,7 +22,18 @@ read "images_mygame.asm"
 org 27000
 read "sprites_table_mygame.asm"
 
-org 42040; 
+org 42040;
 ;----------------- MAPA DEL MUNDO para demo 3d (400bytes) ------------------------
 read "map_table_mygame.asm"
+
+
+;
+; cargo las rutinas auxiliares en esamblador en la misma dirección que 
+; el layout y el mapa del mundo, porqueno los uso
+; #A438
+;
+org 42040
+;----------------- RUTINAS AUXILIARTES EN ESAMBLADOR ------------------------
+read "aux_routines.asm"
+
 
