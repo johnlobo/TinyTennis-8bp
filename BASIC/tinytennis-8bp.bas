@@ -9,18 +9,18 @@
 60 FOR j=0 TO 31:|SETUPSP,j,0,0:NEXT:|3D,0:'reset sprites
 
 1 ' SETUP BOLA : sprite 31 -> bola
-100 bx=&2800:by=&0a00:bz=&0100' coordenadas de la pelota
-110 bvx=&0f:bvy=&32:bvz=&0' velocidad de la pelota
-120 bpx=bx:call &a438,@bpx  'redondeo la posicion anterior en x
-125 bpy=by:call &a438,@bpy  'redondeo la posicion anterior en y
-126 bpz=bz:call &a438,@bpz  'redondeo la posicion anterior en z
+100 bx=80:by=200:bz=2' coordenadas de la pelota
+110 bvx=1:bvy=4:bvz=0' velocidad de la pelota
+120 bpx=bx:call &a445,@bpx  'redondeo la posicion anterior en x
+125 bpy=by:call &a445,@bpy  'redondeo la posicion anterior en y
+126 bpz=bz:call &a445,@bpz  'redondeo la posicion anterior en z
 127 tz=bpz:call &a445,@tz: bpzy=(bpy-tz)    ' PREVIOUS BALL COORDINATES
 130 g=4' gravity
 140 |SETUPSP,31,0,1+32' status de la bola
 150 |SETUPSP,31,9,17' assign ball sprite
-155 brx=bx:call &a438,@brx 'redondeo la posicion de render en x
+155 brx=bx:call &a445,@brx 'redondeo la posicion de render en x
 160 tz=bz:call &a445,@tz ' divides bz by 2'
-165 bry=by-tz:call &a438,@bry
+165 bry=by-tz:call &a445,@bry
 167 |LOCATESP,31,bry,brx:'colocamos al sprite (sin imprimirlo aun)
 1' SETUP BLANK : sprite 0 -> borrado
 170 |SETUPSP,0,9,16' assign blank sprite
@@ -73,19 +73,19 @@
 610 bx=bx+bvx:by=by+bvy
 1' CHECK KEYBOARD
 620 IF bx<=0 AND bvx<0 THEN bx=0:bvx = - bvx
-630 IF bx>=&5000 AND bvx>0 THEN bx=&5000:bvx = - bvx
+630 IF bx>=160 AND bvx>0 THEN bx=160:bvx = - bvx
 640 IF by<=0 AND bvy<0 THEN by=0:bvy = - bvy
-650 IF by>=&c800 AND bvy>0 THEN by=&c800:bvy = - bvy
+650 IF by>=400 AND bvy>0 THEN by=400:bvy = - bvy
 1' UPDATE GRAVITY AND Z COORD
 660 bvz=bvz-g:bz=bz+bvz
 1' brx, bry, brz  -> render coordinates
-661 brx=bx:call &A438,@brx
-662 bry=by:call &a438,@bry
-663 brz=bz:call &a438,@brz
+661 brx=bx:call &A445,@brx
+662 bry=by:call &a445,@bry
+663 brz=bz:call &a445,@brz
 1' bzy -> projection y coordinates
 664 tz=brz:call &a445,@tz:bzy=(bry-tz)
 1' CHECK IMPACT WITH THE FLOOR
-665 IF bz<=0 THEN bz=0:bvz=80:|SETUPSP,1,9,19:|LOCATESP,1,bry,brx:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101
+665 IF bz<=0 THEN bz=0:bvz=32:|SETUPSP,1,9,19:|LOCATESP,1,bry,brx:|SETUPSP,1,7,1:|SETUPSP,1,0,&x101
 1'UPDATE BOT DIRECTION
 668 p2x=PEEK(27451):p2y=PEEK(27449)
 670 IF bvy>0 THEN p2vx = -SGN(p2x-40): GOTO 710
@@ -121,7 +121,7 @@
 1'****************************************************
 1' TRATAMIENTO DE COLISIONES
 1'****************************************************
-1200 IF cod = 29 AND PEEK(27471) = 4 THEN bvy=-25:bvx= (PEEK(27472) - 1)*128:RETURN
+1200 IF cod = 29 AND PEEK(27471) = 4 THEN bvy=-2:bvx= (PEEK(27472) - 1)*2:RETURN
 1220 bvy=0:bvx=0:RETURN
 
 1'****************************************************
